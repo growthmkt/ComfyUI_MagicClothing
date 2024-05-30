@@ -10,20 +10,21 @@ import torch.nn.functional as F
 import torchvision.transforms as transforms
 
 from collections import OrderedDict
-
+import comfy.model_management
 
 def load_checkpoint(model, checkpoint_path):
     if not os.path.exists(checkpoint_path):
-        print("----No checkpoints at given path----")
+        print("----No checkpoints at given path---- Put the checkpoint in the folder checkpoints from this link https://huggingface.co/ShineChen1024/MagicClothing/tree/main")
         return
-    model_state_dict = torch.load(checkpoint_path, map_location=torch.device("cpu"))
+    
+    model_state_dict = torch.load(checkpoint_path, map_location=comfy.model_management.get_torch_device())
     new_state_dict = OrderedDict()
     for k, v in model_state_dict.items():
         name = k[7:]  # remove `module.`
         new_state_dict[name] = v
 
     model.load_state_dict(new_state_dict)
-    print("----checkpoints loaded from path: {}----".format(checkpoint_path))
+    # print("----checkpoints loaded from path: {}----".format(checkpoint_path))
     return model
 
 

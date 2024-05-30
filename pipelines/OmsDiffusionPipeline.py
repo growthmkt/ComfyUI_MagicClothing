@@ -1,4 +1,6 @@
+import torch
 from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import *
+import comfy.model_management
 
 
 class OmsDiffusionPipeline(StableDiffusionPipeline):
@@ -153,7 +155,8 @@ class OmsDiffusionPipeline(StableDiffusionPipeline):
         else:
             batch_size = prompt_embeds.shape[0]
 
-        device = self._execution_device
+        # device = self._execution_device
+        device = comfy.model_management.get_torch_device()
 
         # 3. Encode input prompt
         lora_scale = (

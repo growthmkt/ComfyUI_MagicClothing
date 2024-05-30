@@ -1,4 +1,7 @@
+import torch
 from diffusers.pipelines.animatediff.pipeline_animatediff import *
+import comfy.model_management
+
 
 class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
 
@@ -210,7 +213,8 @@ class OmsAnimateDiffusionPipeline(AnimateDiffPipeline):
         else:
             batch_size = prompt_embeds.shape[0]
 
-        device = self._execution_device
+        # device = self._execution_device
+        device = comfy.model_management.get_torch_device()
 
         # 3. Encode input prompt
         text_encoder_lora_scale = (
