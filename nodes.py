@@ -6,28 +6,42 @@ import numpy as np
 from PIL import Image
 from diffusers import UniPCMultistepScheduler, AutoencoderKL, MotionAdapter, DDIMScheduler, ControlNetModel
 from diffusers.pipelines import StableDiffusionPipeline
+from pathlib import Path
 
 from .garment_adapter.garment_diffusion import ClothAdapter, ClothAdapter_AnimateDiff
 from .pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
 from .pipelines.OmsAnimateDiffusionPipeline import OmsAnimateDiffusionPipeline
 from .pipelines.VirtualTryOnPipeline import VirtualTryOnPipeline
-import comfy.model_management
 
-
-device = comfy.model_management.get_torch_device()
+device = "cuda" if torch.cuda.is_available() else "cpu"
 pipe_path = ["SG161222/Realistic_Vision_V4.0_noVAE", "Lykon/dreamshaper-8", "redstonehero/xxmix_9realistic_v40"]
 motion_adapter_path = ['guoyww/animatediff-motion-adapter-v1-5-2']
 faceid_version = ['FaceID', 'FaceIDPlus', 'FaceIDPlusV2']
 
-folder_paths.folder_names_and_paths["magic_cloth_checkpoint"] = (
-    [
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'checkpoints'),
-    ],
-    [".safetensors"]
-)
 
-checkpoints_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'checkpoints')
-ipadapter_faceid_path = os.path.join(checkpoints_path, 'ipadapter_faceid')
+def fast_scandir(dirname, target_dir):
+    list_subfolders = os.listdir(target_dir)
+    if dirname in list_subfolders:
+        return True
+    else:
+        return False
+
+
+if fast_scandir("clothes", folder_paths.folder_names_and_paths['checkpoints'][0][0] ):
+    # So, download the weights
+    clothes_folder = folder_paths.folder_names_and_paths['checkpoints'][0][0] + "/clothes"
+else:
+    clothes_folder = folder_paths.folder_names_and_paths['checkpoints'][0][0] + "/clothes"
+    if not os.path.exists(clothes_folder):
+        os.makedirs(clothes_folder)
+        print("New folder clothes created")
+
+checkpoints_path = clothes_folder
+folder_paths.folder_names_and_paths["magic_cloth_checkpoint"] = ([ clothes_folder ], [".safetensors"])
+tmp_folder = Path(folder_paths.folder_names_and_paths['checkpoints'][0][0])
+model_folder = tmp_folder.parents[0]
+ipadapter_faceid_path = str(model_folder) + '/ipadapter'
+
 
 def find_safetensors_files(directory):
     safetensors_files = [
