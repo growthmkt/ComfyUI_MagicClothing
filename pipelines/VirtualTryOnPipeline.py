@@ -2,7 +2,7 @@ import pdb
 
 import torch
 from diffusers.pipelines.controlnet.pipeline_controlnet_inpaint import *
-
+import comfy.model_management
 
 class VirtualTryOnPipeline(StableDiffusionControlNetInpaintPipeline):
     @torch.no_grad()
@@ -224,7 +224,8 @@ class VirtualTryOnPipeline(StableDiffusionControlNetInpaintPipeline):
             crops_coords = None
             resize_mode = "default"
 
-        device = self._execution_device
+        # device = self._execution_device
+        device = comfy.model_management.get_torch_device()
 
         if isinstance(controlnet, MultiControlNetModel) and isinstance(controlnet_conditioning_scale, float):
             controlnet_conditioning_scale = [controlnet_conditioning_scale] * len(controlnet.nets)

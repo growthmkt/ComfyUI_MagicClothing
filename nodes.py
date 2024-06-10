@@ -11,8 +11,10 @@ from .garment_adapter.garment_diffusion import ClothAdapter, ClothAdapter_Animat
 from .pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
 from .pipelines.OmsAnimateDiffusionPipeline import OmsAnimateDiffusionPipeline
 from .pipelines.VirtualTryOnPipeline import VirtualTryOnPipeline
+import comfy.model_management
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+
+device = comfy.model_management.get_torch_device()
 pipe_path = ["SG161222/Realistic_Vision_V4.0_noVAE", "Lykon/dreamshaper-8", "redstonehero/xxmix_9realistic_v40"]
 motion_adapter_path = ['guoyww/animatediff-motion-adapter-v1-5-2']
 faceid_version = ['FaceID', 'FaceIDPlus', 'FaceIDPlusV2']

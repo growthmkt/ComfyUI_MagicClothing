@@ -1,5 +1,6 @@
 import torch
 from diffusers.pipelines.controlnet.pipeline_controlnet import *
+import comfy.model_management
 
 
 class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
@@ -190,7 +191,8 @@ class OmsDiffusionControlNetPipeline(StableDiffusionControlNetPipeline):
         else:
             batch_size = prompt_embeds.shape[0]
 
-        device = self._execution_device
+        # device = self._execution_device
+        device = comfy.model_management.get_torch_device()
 
         if isinstance(controlnet, MultiControlNetModel) and isinstance(controlnet_conditioning_scale, float):
             controlnet_conditioning_scale = [controlnet_conditioning_scale] * len(controlnet.nets)
