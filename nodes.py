@@ -13,33 +13,23 @@ from .pipelines.OmsDiffusionPipeline import OmsDiffusionPipeline
 from .pipelines.OmsAnimateDiffusionPipeline import OmsAnimateDiffusionPipeline
 from .pipelines.VirtualTryOnPipeline import VirtualTryOnPipeline
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cuda" if torch.cuda.is_available() else "mps"
 pipe_path = ["SG161222/Realistic_Vision_V4.0_noVAE", "Lykon/dreamshaper-8", "redstonehero/xxmix_9realistic_v40"]
 motion_adapter_path = ['guoyww/animatediff-motion-adapter-v1-5-2']
 faceid_version = ['FaceID', 'FaceIDPlus', 'FaceIDPlusV2']
 
 
-def fast_scandir(dirname, target_dir):
-    list_subfolders = os.listdir(target_dir)
-    if dirname in list_subfolders:
-        return True
-    else:
-        return False
-
-
-if fast_scandir("clothes", folder_paths.folder_names_and_paths['checkpoints'][0][0] ):
-    # So, download the weights
-    clothes_folder = folder_paths.folder_names_and_paths['checkpoints'][0][0] + "/clothes"
-else:
-    clothes_folder = folder_paths.folder_names_and_paths['checkpoints'][0][0] + "/clothes"
-    if not os.path.exists(clothes_folder):
-        os.makedirs(clothes_folder)
-        print("New folder clothes created")
-
-checkpoints_path = clothes_folder
-folder_paths.folder_names_and_paths["magic_cloth_checkpoint"] = ([ clothes_folder ], [".safetensors"])
 tmp_folder = Path(folder_paths.folder_names_and_paths['checkpoints'][0][0])
 model_folder = tmp_folder.parents[0]
+clothes_folder = str(model_folder) + "/clothes"
+if not os.path.exists(clothes_folder):
+    os.makedirs(clothes_folder)
+    print("New folder clothes created")
+else: 
+    print("Folder Clothes exists")
+    
+checkpoints_path = clothes_folder
+folder_paths.folder_names_and_paths["magic_cloth_checkpoint"] = ([ clothes_folder ], [".safetensors"])
 ipadapter_faceid_path = str(model_folder) + '/ipadapter'
 
 
